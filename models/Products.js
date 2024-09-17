@@ -25,16 +25,10 @@ const productSchema = new Schema({
     min: 0,
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
+    type: String,
+    enum: ["juguetes, ropa, tcg, accesorios, videojuegos, juegos de mesa"],
     required: true,
   },
-  tags: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Tag",
-    },
-  ],
   imageUrl: {
     type: String,
     required: true,

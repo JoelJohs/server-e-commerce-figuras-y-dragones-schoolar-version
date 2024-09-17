@@ -1,28 +1,43 @@
 import Products from "../models/productsModel.js";
-import upload from "../middleware/multerConfig.js";
 
-// Get all products
-export const getProducts = async (req, res) => {
-  try {
-    const products = await Products.find();
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+/** MULTER SECTION  **/
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// dirname setup for multer
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Multer setup object with storage and fileFilter
+const multerSetup = {
+  storage: (fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, "../uploads"));
+    },
+    filename: (req, file, cb) => {
+      const extension = file.mimetype.split("/")[1];
+      cb.null, `${file.fieldname}-${Date.now()}.${extension}`;
+    },
+    fileFilter: (req, file, cb) => {
+      if (
+        file.mimetype === "image/jpeg" ||
+        file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg"
+      ) {
+        cb(null, true);
+      } else {
+        cb(new Error("Formato No válido"));
+      }
+    },
+  })),
 };
 
-// Create a product
-export const createProduct = async (req, res) => {
-  try {
-    const product = new Products({
-      name: req.body.name,
-      price: req.body.price,
-      description: req.body.description,
-      image: req.file.path,
-    });
-    const newProduct = await product.save();
-    res.status(201).json(newProduct);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+// Multer middleware
+const upload = multer(multerSetup).single("image");
+
+/** PRODUCTS CONTROLLERS **/
+
+const uploadImage = (req, res, next) => {
+    
 };

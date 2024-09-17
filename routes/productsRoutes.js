@@ -1,9 +1,9 @@
 import express from "express";
-import { getProducts } from "../controllers/productsController";
-import { MulterError } from "multer";
+
+import upload from "../middleware/multerConfig.js";
 
 // Create router
 const router = express.Router();
 
-// Get all products
-router.get("/products", getProducts);
+// Export router
+export default router;
