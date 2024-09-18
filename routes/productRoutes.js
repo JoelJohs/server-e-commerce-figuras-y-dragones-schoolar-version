@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createProduct,
-  tryPostFile,
+  uploadImage,
 } from "../controllers/productsController.js";
 import { upload } from "../utils/multer.js";
 
@@ -9,9 +9,7 @@ import { upload } from "../utils/multer.js";
 const router = express.Router();
 
 // Create a new product
-router.post("/products", createProduct);
-
-router.post("/products/try", upload.single("image"), tryPostFile);
+router.post("/products", upload.single("image"), uploadImage, createProduct);
 
 // Export router
 export default router;

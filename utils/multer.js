@@ -13,9 +13,16 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename(req, file, cb) {
-    const timestamp = new Date().toISOString().replace(/:/g, "-");
-    cb(null, `${timestamp}-${file.originalname}`);
+    const date = new Date();
+    const formattedDate = date.toLocaleDateString("es-ES").replace(/\//g, "-");
+    const productName = req.body.productName || "unknown-product";
+    const formattedProductName = productName.replace(/\s+/g, "-");
+    const fileExtension = path.extname(file.originalname);
+
+    cb(null, `${formattedProductName}_${formattedDate}${fileExtension}`);
   },
 });
 
-export const upload = multer({ storage });
+const upload = multer({ storage });
+
+export { upload };
