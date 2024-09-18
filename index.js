@@ -4,6 +4,7 @@ import router from "./routes/index.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import { upload } from "./utils/multer.js";
 
 // Create an express app
 const app = express();

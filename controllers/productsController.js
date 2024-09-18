@@ -1,43 +1,53 @@
-import Products from "../models/productsModel.js";
-
-/** MULTER SECTION  **/
-import multer from "multer";
+import Products from "../models/Products.js";
+import { upload } from "../utils/multer.js";
 import path from "path";
-import { fileURLToPath } from "url";
 
-// dirname setup for multer
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Multer setup object with storage and fileFilter
-const multerSetup = {
-  storage: (fileStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, path.join(__dirname, "../uploads"));
-    },
-    filename: (req, file, cb) => {
-      const extension = file.mimetype.split("/")[1];
-      cb.null, `${file.fieldname}-${Date.now()}.${extension}`;
-    },
-    fileFilter: (req, file, cb) => {
-      if (
-        file.mimetype === "image/jpeg" ||
-        file.mimetype === "image/png" ||
-        file.mimetype === "image/jpg"
-      ) {
-        cb(null, true);
-      } else {
-        cb(new Error("Formato No válido"));
-      }
-    },
-  })),
+// Upload image and validate format with multer
+export const uploadImage = (req, res, next) => {
+  upload(req, res, function (error) {
+    if (error) {
+      return res.status(400).json({ message: error });
+    }
+    return next();
+  });
 };
 
-// Multer middleware
-const upload = multer(multerSetup).single("image");
+// Create a new product
+export const createProduct = async (req, res, next) => {
+  const product = new Products(req.body);
 
-/** PRODUCTS CONTROLLERS **/
+  if (req.file) {
+    product.image = req.file.path;
+  }
 
-const uploadImage = (req, res, next) => {
-    
+  await product.save();
+  res.status(201).json(product);
+
+  try {
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+};
+
+export const tryPostFile = async (req, res, next) => {
+  if (req.file) {
+    // Obtener la ruta relativa a partir de la carpeta de uploads
+    const relativePath = path.relative(path.resolve(), req.file.path);
+    const relativeDestination = path.relative(
+      path.resolve(),
+      req.file.destination
+    );
+
+    // Actualizar el objeto file con la ruta relativa
+    const updatedFile = {
+      ...req.file,
+      path: relativePath,
+      destination: relativeDestination,
+    };
+
+    console.log(updatedFile); // Imprimir el objeto con la ruta relativa
+    res.status(200).json(updatedFile); // Responder con el objeto actualizado
+  } else {
+    res.status(400).json({ message: "No file uploaded" });
+  }
 };

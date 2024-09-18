@@ -26,10 +26,17 @@ const productSchema = new Schema({
   },
   category: {
     type: String,
-    enum: ["juguetes, ropa, tcg, accesorios, videojuegos, juegos de mesa"],
+    enum: [
+      "juguetes",
+      "ropa",
+      "tcg",
+      "accesorios",
+      "videojuegos",
+      "juegos de mesa",
+    ],
     required: true,
   },
-  imageUrl: {
+  image: {
     type: String,
     required: true,
   },
