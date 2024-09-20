@@ -68,6 +68,23 @@ export const createProduct = async (req, res, next) => {
 // Update a product
 export const updateProduct = async (req, res, next) => {
   try {
+    const previousProduct = await Products.findById(req.params.id);
+
+    const newProduct = req.body;
+
+    if (req.file.filename) {
+      newProduct.image = req.file.filename;
+    } else {
+      newProduct.image = previousProduct.image;
+    }
+
+    const product = await Products.findOneAndUpdate(
+      { _id: req.params.id },
+      newProduct,
+      { new: true }
+    );
+
+    res.json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
     next(error);
