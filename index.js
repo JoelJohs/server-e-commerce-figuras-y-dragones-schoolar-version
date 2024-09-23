@@ -4,13 +4,16 @@ import router from "./routes/index.js";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import { upload } from "./utils/multer.js";
+import cors from "cors";
 
 // Create an express app
 const app = express();
 
 // Set up the app to use static files
 app.use("/uploads", express.static("uploads"));
+
+// Initialize CORS
+app.use(cors());
 
 // Set up the app to use JSON
 app.use(express.json());
